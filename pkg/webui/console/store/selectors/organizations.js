@@ -13,15 +13,18 @@
 // limitations under the License.
 
 import {
+  createPaginationIdsSelectorByEntity,
+  createPaginationTotalCountSelectorByEntity,
+} from '@ttn-lw/lib/store/selectors/pagination'
+import { createFetchingSelector } from '@ttn-lw/lib/store/selectors/fetching'
+import { createErrorSelector } from '@ttn-lw/lib/store/selectors/error'
+
+import {
   GET_ORGS_LIST_BASE,
   GET_ORG_BASE,
   GET_ORGS_RIGHTS_LIST_BASE,
 } from '@console/store/actions/organizations'
 
-import {
-  createPaginationIdsSelectorByEntity,
-  createPaginationTotalCountSelectorByEntity,
-} from './pagination'
 import {
   createEventsSelector,
   createEventsErrorSelector,
@@ -29,8 +32,6 @@ import {
   createEventsInterruptedSelector,
   createEventsPausedSelector,
 } from './events'
-import { createFetchingSelector } from './fetching'
-import { createErrorSelector } from './error'
 import { createRightsSelector, createPseudoRightsSelector } from './rights'
 
 const ENTITY = 'organizations'
