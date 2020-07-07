@@ -16,17 +16,26 @@ import React from 'react'
 import Query from 'query-string'
 import { Redirect } from 'react-router-dom'
 import { defineMessages } from 'react-intl'
-import { Container, Col, Row } from 'react-grid-system'
 
 import SafeInspector from '@ttn-lw/components/safe-inspector'
+import Button from '@ttn-lw/components/button'
 
 import Message from '@ttn-lw/lib/components/message'
+import IntlHelmet from '@ttn-lw/lib/components/intl-helmet'
 
+import style from '@account/views/front/front.styl'
+
+import { selectApplicationSiteName, selectApplicationSiteTitle } from '@ttn-lw/lib/selectors/env'
 import PropTypes from '@ttn-lw/lib/prop-types'
 
 const m = defineMessages({
-  code: 'Your authorization code',
+  code: 'Authorization code',
+  codeDescription: 'Your authorization code is:',
+  backToAccount: 'Back to {siteTitle}',
 })
+
+const siteName = selectApplicationSiteName()
+const siteTitle = selectApplicationSiteTitle()
 
 export default class Code extends React.Component {
   static propTypes = {
@@ -41,14 +50,34 @@ export default class Code extends React.Component {
     }
 
     return (
-      <Container>
-        <Row>
-          <Col>
-            <Message component="h2" content={m.code} />
-            <SafeInspector data={query.code} initiallyVisible hideable={false} isBytes={false} />
-          </Col>
-        </Row>
-      </Container>
+      <React.Fragment>
+        <div className={style.form}>
+          <IntlHelmet title={m.createANewAccount} />
+          <h1 className={style.title}>
+            {siteName}
+            <br />
+            <Message content={m.code} component="strong" />
+          </h1>
+          <hr className={style.hRule} />
+          <Message
+            content={m.codeDescription}
+            component="label"
+            className={style.codeDescription}
+          />
+          <SafeInspector
+            data={query.code}
+            initiallyVisible
+            hideable={false}
+            isBytes={false}
+            className={style.code}
+          />
+          <Button.Link
+            to="/"
+            icon="keyboard_arrow_left"
+            message={{ ...m.backToAccount, values: { siteTitle } }}
+          />
+        </div>
+      </React.Fragment>
     )
   }
 }

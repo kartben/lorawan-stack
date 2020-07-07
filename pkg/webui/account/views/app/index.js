@@ -22,16 +22,12 @@ import ErrorView from '@ttn-lw/lib/components/error-view'
 import FullViewError from '@ttn-lw/lib/components/full-view-error'
 
 import Landing from '@account/views/landing'
-import Login from '@account/views/login'
 import Authorize from '@account/views/authorize'
-import CreateAccount from '@account/views/create-account'
-import ForgotPassword from '@account/views/forgot-password'
-import UpdatePassword from '@account/views/update-password'
-import Code from '@account/views/code'
-import Validate from '@account/views/validate'
 
 import PropTypes from '@ttn-lw/lib/prop-types'
 import dev from '@ttn-lw/lib/dev'
+
+import Front from '../front'
 
 const GenericNotFound = () => <FullViewError error={{ statusCode: 404 }} />
 
@@ -65,13 +61,8 @@ class AccountApp extends React.PureComponent {
             />
             <Switch>
               <Route path="/" exact component={Landing} />
-              <Route path="/login" component={Login} />
               <Route path="/authorize" component={Authorize} />
-              <Route path="/register" component={CreateAccount} />
-              <Route path="/forgot-password" component={ForgotPassword} />
-              <Route path="/code" component={Code} />
-              <Route path="/update-password" component={UpdatePassword} />
-              <Route path="/validate" component={Validate} />
+              <Route path="/" component={Front} />
               <Route component={GenericNotFound} />
             </Switch>
           </React.Fragment>
