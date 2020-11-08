@@ -50,7 +50,7 @@ const m = defineMessages({
 })
 
 @connect(
-  function(state) {
+  state => {
     const link = selectApplicationLink(state)
     const fetching = selectApplicationLinkFetching(state)
 
