@@ -335,5 +335,7 @@ func TestUsersCRUD(t *testing.T) {
 			a.So(errors.IsNotFound(err), should.BeTrue)
 		}
 		a.So(empty, should.BeNil)
+		_, err = reg.Purge(ctx, &user.UserIdentifiers, creds)
+		a.So(err, should.BeNil)
 	})
 }
