@@ -71,6 +71,13 @@ service OrganizationRegistry {
       delete: "/organizations/{organization_id}"
     };
   };
+
+  // Purge the organization. This will release the organization ID for reuse.
+  rpc Purge(OrganizationIdentifiers) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/organizations/{organization_id}/purge"
+    };
+  };
 }
 
 service OrganizationAccess {

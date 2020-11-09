@@ -83,6 +83,13 @@ service GatewayRegistry {
       delete: "/gateways/{gateway_id}"
     };
   };
+
+  // Purge the gateway. This will release all field values for reuse.
+  rpc Purge(GatewayIdentifiers) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/gateways/{gateway_id}/purge"
+    };
+  };
 }
 
 service GatewayAccess {
