@@ -205,5 +205,26 @@ func TestGatewayStore(t *testing.T) {
 			a.So(got.GatewayID, should.Equal, "reuse-foo-eui")
 			a.So(got.EUI, should.Resemble, eui)
 		}
+
+		err = store.PurgeGateway(ctx, &ttnpb.GatewayIdentifiers{GatewayID: "foo"})
+
+		a.So(err, should.BeNil)
+
+		newEUI := &types.EUI64{1, 1, 1, 1, 1, 1, 1, 1}
+		got, err = store.CreateGateway(ctx, &ttnpb.Gateway{
+			GatewayIdentifiers: ttnpb.GatewayIdentifiers{
+				GatewayID: "foo",
+				EUI:       newEUI,
+			},
+		})
+
+		a.So(err, should.BeNil)
+		if a.So(got, should.NotBeNil) {
+			a.So(got.GatewayID, should.Equal, "foo")
+			a.So(got.EUI, should.Resemble, newEUI)
+		}
+
+		err = store.PurgeGateway(ctx, &ttnpb.GatewayIdentifiers{GatewayID: "foo"})
+		a.So(err, should.BeNil)
 	})
 }
