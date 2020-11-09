@@ -251,6 +251,28 @@ var (
 		}
 		return appID.EntityIdentifiers(), nil
 	})
+	applicationsPurgeCommand = &cobra.Command{
+		Use:     "purge [application-id]",
+		Aliases: []string{"permanent-delete", "hard-delete"},
+		Short:   "Purge an application",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			appID := getApplicationID(cmd.Flags(), args)
+			if appID == nil {
+				return errNoApplicationID
+			}
+
+			is, err := api.Dial(ctx, config.IdentityServerGRPCAddress)
+			if err != nil {
+				return err
+			}
+			_, err = ttnpb.NewApplicationRegistryClient(is).Purge(ctx, appID)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		},
+	}
 )
 
 func init() {
@@ -281,5 +303,7 @@ func init() {
 	applicationsCommand.AddCommand(applicationsDeleteCommand)
 	applicationsContactInfoCommand.PersistentFlags().AddFlagSet(applicationIDFlags())
 	applicationsCommand.AddCommand(applicationsContactInfoCommand)
+	applicationsPurgeCommand.Flags().AddFlagSet(applicationIDFlags())
+	applicationsCommand.AddCommand(applicationsPurgeCommand)
 	Root.AddCommand(applicationsCommand)
 }

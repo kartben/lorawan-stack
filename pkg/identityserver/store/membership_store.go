@@ -285,3 +285,19 @@ func (s *membershipStore) DeleteEntityMembers(ctx context.Context, entityID ttnp
 	}
 	return query.Delete(&memberships).Error
 }
+
+func (s *membershipStore) DeleteAccountMembers(ctx context.Context, id ttnpb.OrganizationOrUserIdentifiers) error {
+	defer trace.StartRegion(ctx, "delete account memberships").End()
+	var account Account
+	err := s.query(ctx, Account{}, withUnscoped()).Where(Account{
+		UID:         id.IDString(),
+		AccountType: id.EntityType(),
+	}).Find(&account).Error
+	if err != nil {
+		return err
+	}
+	err = s.query(ctx, Membership{}).Where(&Membership{
+		AccountID: account.PrimaryKey(),
+	}).Delete(&Membership{}).Error
+	return err
+}

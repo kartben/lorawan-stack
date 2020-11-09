@@ -128,5 +128,15 @@ func TestApplicationStore(t *testing.T) {
 
 		a.So(err, should.BeNil)
 		a.So(list, should.BeEmpty)
+
+		err = store.PurgeApplication(ctx, &ttnpb.ApplicationIdentifiers{ApplicationID: "foo"})
+
+		a.So(err, should.BeNil)
+
+		_, err = store.CreateApplication(ctx, &ttnpb.Application{
+			ApplicationIdentifiers: ttnpb.ApplicationIdentifiers{ApplicationID: "foo"},
+		})
+
+		a.So(err, should.BeNil)
 	})
 }
