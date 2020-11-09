@@ -267,3 +267,21 @@ func (s *membershipStore) SetMember(ctx context.Context, id *ttnpb.OrganizationO
 	membership.Rights = Rights(*rights)
 	return query.Save(&membership).Error
 }
+
+func (s *membershipStore) DeleteEntityMembers(ctx context.Context, entityID ttnpb.Identifiers) error {
+	defer trace.StartRegion(ctx, "delete entity memberships").End()
+	entity, err := s.findDeletedEntity(ctx, entityID, "id")
+	if err != nil {
+		return err
+	}
+	var memberships []Membership
+	query := s.query(ctx, Membership{}).Where(&Membership{
+		EntityID:   entity.PrimaryKey(),
+		EntityType: entityTypeForID(entityID),
+	})
+	err = query.Find(&memberships).Error
+	if err != nil {
+		return err
+	}
+	return query.Delete(&memberships).Error
+}

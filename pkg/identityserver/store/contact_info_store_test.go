@@ -81,6 +81,14 @@ func TestContactInfoStore(t *testing.T) {
 				}
 			}
 		}
+
+		err = s.DeleteEntityContactInfo(ctx, app.ApplicationIdentifiers)
+
+		a.So(err, should.BeNil)
+
+		contactInfo, err = s.GetContactInfo(ctx, app.ApplicationIdentifiers)
+
+		a.So(contactInfo, should.HaveLength, 0)
 	})
 }
 
@@ -132,5 +140,6 @@ func TestContactInfoValidation(t *testing.T) {
 		if a.So(info, should.HaveLength, 1) {
 			a.So(info[0].ValidatedAt, should.NotBeNil)
 		}
+
 	})
 }
