@@ -247,6 +247,10 @@ func TestOrganizationsCRUD(t *testing.T) {
 		_, err = reg.Delete(ctx, &created.OrganizationIdentifiers, creds)
 
 		a.So(err, should.BeNil)
+
+		_, err = reg.Purge(ctx, &created.OrganizationIdentifiers, creds)
+
+		a.So(err, should.BeNil)
 	})
 }
 
