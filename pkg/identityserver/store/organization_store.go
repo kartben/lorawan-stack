@@ -175,7 +175,7 @@ func (s *organizationStore) PurgeOrganization(ctx context.Context, id *ttnpb.Org
 		return err
 	}
 	if len(orgModel.Attributes) > 0 {
-		if err := s.replaceAttributes(ctx, "user", orgModel.ID, orgModel.Attributes, nil); err != nil {
+		if err := s.replaceAttributes(ctx, "organization", orgModel.ID, orgModel.Attributes, nil); err != nil {
 			return err
 		}
 	}
