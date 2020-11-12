@@ -45,6 +45,7 @@ var (
 	endDeviceFlattenPaths    = []string{"provisioning_data"}
 	endDevicePictureFlags    = &pflag.FlagSet{}
 	endDeviceLocationFlags   = util.FieldFlags(&ttnpb.Location{}, "location")
+	applicationUplinkFlags   = util.FieldFlags(&ttnpb.ApplicationUplink{}, "uplink_message")
 
 	selectAllEndDeviceFlags = util.SelectAllFlagSet("end devices")
 )
@@ -167,8 +168,9 @@ func generateDevAddr(netID types.NetID) (types.DevAddr, error) {
 }
 
 var (
-	errJoinServerDisabled    = errors.DefineFailedPrecondition("join_server_disabled", "Join Server is disabled")
-	errNetworkServerDisabled = errors.DefineFailedPrecondition("network_server_disabled", "Network Server is disabled")
+	errJoinServerDisabled        = errors.DefineFailedPrecondition("join_server_disabled", "Join Server is disabled")
+	errNetworkServerDisabled     = errors.DefineFailedPrecondition("network_server_disabled", "Network Server is disabled")
+	errApplicationServerDisabled = errors.DefineFailedPrecondition("application_server_disabled", "Application Server is disabled")
 )
 
 var (
@@ -1120,6 +1122,38 @@ To generate a QR code for multiple end devices:
 			return err
 		},
 	}
+	endDevicesSimulateUplinkCommand = &cobra.Command{
+		Use:     "simulate-uplink [application-id] [device-id]",
+		Aliases: []string{"simulate-up", "sim-up"},
+		Short:   "Simulate uplink message from the end device",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			devID, err := getEndDeviceID(cmd.Flags(), args, true)
+			if err != nil {
+				return err
+			}
+			if !config.ApplicationServerEnabled {
+				return errApplicationServerDisabled.New()
+			}
+
+			// fport, _ := cmd.Flags().GetUint32("f-port")
+			up := &ttnpb.ApplicationUp{
+				EndDeviceIdentifiers: *devID,
+				Simulated:            true,
+				Up:                   &ttnpb.ApplicationUp_UplinkMessage{},
+			}
+			if err := util.SetFields(up.Up, applicationUplinkFlags); err != nil {
+				return err
+			}
+
+			cc, err := api.Dial(ctx, config.ApplicationServerGRPCAddress)
+			if err != nil {
+				return err
+			}
+			up.EndDeviceIdentifiers = *devID
+			_, err = ttnpb.NewAppAsClient(cc).SimulateUplink(ctx, up)
+			return err
+		},
+	}
 )
 
 func init() {
@@ -1215,6 +1249,9 @@ func init() {
 	endDevicesCommand.AddCommand(endDevicesGenerateQRCommand)
 	endDevicesExternalJSCommand.Flags().AddFlagSet(endDeviceIDFlags())
 	endDevicesCommand.AddCommand(endDevicesExternalJSCommand)
+	endDevicesSimulateUplinkCommand.Flags().AddFlagSet(endDeviceIDFlags())
+	endDevicesSimulateUplinkCommand.Flags().AddFlagSet(applicationUplinkFlags)
+	endDevicesCommand.AddCommand(endDevicesSimulateUplinkCommand)
 
 	endDevicesCommand.AddCommand(applicationsDownlinkCommand)
 
