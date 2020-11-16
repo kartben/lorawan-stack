@@ -26,6 +26,7 @@ import (
 	"go.thethings.network/lorawan-stack/v3/pkg/applicationserver/io/packages"
 	"go.thethings.network/lorawan-stack/v3/pkg/applicationserver/io/packages/loradms/v1/api"
 	"go.thethings.network/lorawan-stack/v3/pkg/applicationserver/io/packages/loradms/v1/api/objects"
+	"go.thethings.network/lorawan-stack/v3/pkg/component"
 	"go.thethings.network/lorawan-stack/v3/pkg/errors"
 	"go.thethings.network/lorawan-stack/v3/pkg/events"
 	"go.thethings.network/lorawan-stack/v3/pkg/jsonpb"
@@ -35,7 +36,11 @@ import (
 	"google.golang.org/grpc"
 )
 
-const packageName = "lora-cloud-device-management-v1"
+const (
+	packageName = "lora-cloud-device-management-v1"
+
+	defaultClientTimeout = 30 * time.Second
+)
 
 // DeviceManagementPackage is the LoRa Cloud Device Management application package.
 //
@@ -219,13 +224,15 @@ func (p *DeviceManagementPackage) Package() *ttnpb.ApplicationPackage {
 }
 
 // New instantiates the LoRa Cloud Device Management package.
-func New(server io.Server, registry packages.Registry) packages.ApplicationPackageHandler {
+func New(ctx context.Context, server io.Server, registry packages.Registry) packages.ApplicationPackageHandler {
+	client, err := server.HTTPClient(ctx, component.WithTimeout(defaultClientTimeout))
+	if err != nil {
+		log.FromContext(ctx).WithError(err).Error("Failed to create HTTP client")
+	}
 	return &DeviceManagementPackage{
 		server:   server,
 		registry: registry,
-		client: &http.Client{
-			Timeout: 30 * time.Second,
-		},
+		client:   client,
 	}
 }
 
