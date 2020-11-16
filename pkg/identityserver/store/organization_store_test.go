@@ -128,5 +128,23 @@ func TestOrganizationStore(t *testing.T) {
 
 		a.So(err, should.BeNil)
 		a.So(list, should.BeEmpty)
+
+		err = store.PurgeOrganization(ctx, &ttnpb.OrganizationIdentifiers{OrganizationID: "foo"})
+
+		a.So(err, should.BeNil)
+
+		//Check that organization ids are released after purge
+		_, err = store.CreateOrganization(ctx, &ttnpb.Organization{
+			OrganizationIdentifiers: ttnpb.OrganizationIdentifiers{OrganizationID: "foo"},
+			Name:                    "Foo Organization",
+			Description:             "The Amazing Foo Organization",
+			Attributes: map[string]string{
+				"foo": "bar",
+				"bar": "baz",
+				"baz": "qux",
+			},
+		})
+
+		a.So(err, should.BeNil)
 	})
 }

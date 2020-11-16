@@ -156,5 +156,29 @@ func TestUserStore(t *testing.T) {
 
 		a.So(err, should.BeNil)
 		a.So(list, should.BeEmpty)
+
+		err = store.PurgeUser(ctx, &ttnpb.UserIdentifiers{UserID: "foo"})
+
+		a.So(err, should.BeNil)
+
+		// Check that user ids are released
+		_, err = store.CreateUser(ctx, &ttnpb.User{
+			UserIdentifiers: ttnpb.UserIdentifiers{UserID: "foo"},
+			Name:            "Foo User",
+			Description:     "The Amazing Foo User",
+			Attributes: map[string]string{
+				"foo": "bar",
+				"bar": "baz",
+				"baz": "qux",
+			},
+			ProfilePicture: &ttnpb.Picture{
+				Embedded: &ttnpb.Picture_Embedded{
+					MimeType: "image/png",
+					Data:     []byte("foobarbaz"),
+				},
+			},
+		})
+
+		a.So(err, should.BeNil)
 	})
 }

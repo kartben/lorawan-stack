@@ -635,7 +635,7 @@ func (is *IdentityServer) purgeUser(ctx context.Context, ids *ttnpb.UserIdentifi
 		if err != nil {
 			return err
 		}
-		err = store.GetMembershipStore(db).DeleteAccountMembers(ctx, ids.GetOrganizationOrUserIdentifiers())
+		err = store.GetMembershipStore(db).DeleteAccountMembers(ctx, ids)
 		if err != nil {
 			return err
 		}

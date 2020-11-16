@@ -216,7 +216,7 @@ func TestApplicationsCRUD(t *testing.T) {
 		_, err = reg.Delete(ctx, &created.ApplicationIdentifiers, creds)
 		a.So(err, should.BeNil)
 
-		_, err = reg.Purge(ctx, &created.ApplicationIdentifiers, creds)
+		_, err = reg.Purge(ctx, &created.ApplicationIdentifiers, userCreds(adminUserIdx))
 		a.So(err, should.BeNil)
 	})
 }

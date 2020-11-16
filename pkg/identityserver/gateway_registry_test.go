@@ -500,10 +500,10 @@ func TestGatewaysSecrets(t *testing.T) {
 		_, err = reg.Delete(ctx, &created.GatewayIdentifiers, creds)
 		a.So(err, should.BeNil)
 
-		_, err = reg.Purge(ctx, &created.GatewayIdentifiers, creds)
+		_, err = reg.Purge(ctx, &created.GatewayIdentifiers, userCreds(adminUserIdx))
 		a.So(err, should.BeNil)
 
-		_, err = reg.Purge(ctx, &createdWithoutEncKey.GatewayIdentifiers, creds)
+		_, err = reg.Purge(ctx, &createdWithoutEncKey.GatewayIdentifiers, userCreds(adminUserIdx))
 		a.So(err, should.BeNil)
 	})
 }

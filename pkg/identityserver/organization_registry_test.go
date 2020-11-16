@@ -248,7 +248,7 @@ func TestOrganizationsCRUD(t *testing.T) {
 
 		a.So(err, should.BeNil)
 
-		_, err = reg.Purge(ctx, &created.OrganizationIdentifiers, creds)
+		_, err = reg.Purge(ctx, &created.OrganizationIdentifiers, userCreds(adminUserIdx))
 
 		a.So(err, should.BeNil)
 	})

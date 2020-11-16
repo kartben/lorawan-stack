@@ -133,6 +133,7 @@ func TestApplicationStore(t *testing.T) {
 
 		a.So(err, should.BeNil)
 
+		// Check that application ids are released after purge
 		_, err = store.CreateApplication(ctx, &ttnpb.Application{
 			ApplicationIdentifiers: ttnpb.ApplicationIdentifiers{ApplicationID: "foo"},
 		})
