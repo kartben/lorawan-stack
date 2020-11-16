@@ -18,6 +18,7 @@ import (
 	"context"
 	"crypto/tls"
 	"io/ioutil"
+	"net/http"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -250,6 +251,8 @@ type FrequencyPlansConfig struct {
 	Directory    string            `name:"directory" description:"OS filesystem directory, which contains frequency plans"`
 	URL          string            `name:"url" description:"URL, which contains frequency plans"`
 	Blob         BlobPathConfig    `name:"blob"`
+
+	Transport http.RoundTripper `name:"-"`
 }
 
 // Fetcher returns a fetch.Interface based on the configuration.
@@ -274,7 +277,7 @@ func (c FrequencyPlansConfig) Fetcher(ctx context.Context, blobConf BlobConfig) 
 	case "directory":
 		return fetch.FromFilesystem(c.Directory), nil
 	case "url":
-		return fetch.FromHTTP(c.URL, true)
+		return fetch.FromHTTP(c.Transport, c.URL, true)
 	case "blob":
 		b, err := blobConf.Bucket(ctx, c.Blob.Bucket)
 		if err != nil {
@@ -293,6 +296,8 @@ type DeviceRepositoryConfig struct {
 	Directory    string            `name:"directory" description:"OS filesystem directory, which contains device repository"`
 	URL          string            `name:"url" description:"URL, which contains device repository"`
 	Blob         BlobPathConfig    `name:"blob"`
+
+	Transport http.RoundTripper `name:"-"`
 }
 
 // Fetcher returns a fetch.Interface based on the configuration.
@@ -317,7 +322,7 @@ func (c DeviceRepositoryConfig) Fetcher(ctx context.Context, blobConf BlobConfig
 	case "directory":
 		return fetch.FromFilesystem(c.Directory), nil
 	case "url":
-		return fetch.FromHTTP(c.URL, true)
+		return fetch.FromHTTP(c.Transport, c.URL, true)
 	case "blob":
 		b, err := blobConf.Bucket(ctx, c.Blob.Bucket)
 		if err != nil {
@@ -338,6 +343,8 @@ type InteropClient struct {
 
 	GetFallbackTLSConfig func(ctx context.Context) (*tls.Config, error) `name:"-"`
 	BlobConfig           BlobConfig                                     `name:"-"`
+
+	Transport http.RoundTripper `name:"-"`
 }
 
 // IsZero returns whether conf is empty.
@@ -368,7 +375,7 @@ func (c InteropClient) Fetcher(ctx context.Context) (fetch.Interface, error) {
 	case "directory":
 		return fetch.FromFilesystem(c.Directory), nil
 	case "url":
-		return fetch.FromHTTP(c.URL, true)
+		return fetch.FromHTTP(c.Transport, c.URL, true)
 	case "blob":
 		b, err := c.BlobConfig.Bucket(ctx, c.Blob.Bucket)
 		if err != nil {
@@ -388,6 +395,8 @@ type SenderClientCA struct {
 	Blob      BlobPathConfig    `name:"blob"`
 
 	BlobConfig BlobConfig `name:"-"`
+
+	Transport http.RoundTripper `name:"-"`
 }
 
 // Fetcher returns fetch.Interface defined by conf.
@@ -397,7 +406,7 @@ func (c SenderClientCA) Fetcher(ctx context.Context) (fetch.Interface, error) {
 	case "directory":
 		return fetch.FromFilesystem(c.Directory), nil
 	case "url":
-		return fetch.FromHTTP(c.URL, true)
+		return fetch.FromHTTP(c.Transport, c.URL, true)
 	case "blob":
 		b, err := c.BlobConfig.Bucket(ctx, c.Blob.Bucket)
 		if err != nil {
