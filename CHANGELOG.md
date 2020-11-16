@@ -30,6 +30,7 @@ For details about compatibility between different releases, see the **Commitment
   - If the HTTPS server is available on `https://thethings.example.com:8443`, the following config is required: `--http.redirect-to-tls --http.redirect-to-host=thethings.example.com:8443`.
 - Status display on the error view in the Console.
 - Event views in the Console freezing after receiving thousands of events.
+- Use TLS client configuration for all external HTTP calls. This fixes issues where HTTP calls would fail if custom (e.g. self-signed) CAs were used.
 
 ### Security
 
