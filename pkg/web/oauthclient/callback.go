@@ -68,7 +68,7 @@ func (oc *OAuthClient) HandleCallback(c echo.Context) error {
 	}
 
 	// Exchange token.
-	ctx, err := oc.withTLSClientConfig(c.Request().Context())
+	ctx, err := oc.withHTTPClient(c.Request().Context())
 	if err != nil {
 		return err
 	}
