@@ -170,10 +170,27 @@ var startCommand = &cobra.Command{
 
 		redisConsumerID := redis.Key(host, strconv.Itoa(os.Getpid()))
 
+		transport, err := c.HTTPTransport(ctx)
+		if err != nil {
+			logger.WithError(err).Error("Failed to setup HTTP transport")
+		}
+		if cfg := config.ServiceBase.DeviceRepository; cfg.Transport == nil {
+			cfg.Transport = transport
+		}
+		if cfg := config.ServiceBase.FrequencyPlans; cfg.Transport == nil {
+			cfg.Transport = transport
+		}
+		if cfg := config.ServiceBase.Interop.SenderClientCA; cfg.Transport == nil {
+			cfg.Transport = transport
+		}
+
 		if start.IdentityServer || startDefault {
 			logger.Info("Setting up Identity Server")
 			if config.IS.OAuth.UI.TemplateData.SentryDSN == "" {
 				config.IS.OAuth.UI.TemplateData.SentryDSN = config.Sentry.DSN
+			}
+			if cfg := config.IS.Email.Templates; cfg.Transport == nil {
+				cfg.Transport = transport
 			}
 			is, err := identityserver.New(c, &config.IS)
 			if err != nil {
@@ -210,6 +227,9 @@ var startCommand = &cobra.Command{
 
 			logger.Info("Setting up Network Server")
 
+			if cfg := config.NS.Interop; cfg.Transport == nil {
+				cfg.Transport = transport
+			}
 			uplinkQueueSize := config.NS.ApplicationUplinkQueue.BufferSize
 			if config.NS.ApplicationUplinkQueue.BufferSize > math.MaxInt64 {
 				uplinkQueueSize = math.MaxInt64
@@ -268,6 +288,12 @@ var startCommand = &cobra.Command{
 				config.AS.Webhooks.Registry = &asiowebredis.WebhookRegistry{
 					Redis: redis.New(config.Redis.WithNamespace("as", "io", "webhooks")),
 				}
+			}
+			if cfg := config.AS.Webhooks.Templates; cfg.Transport == nil {
+				cfg.Transport = transport
+			}
+			if cfg := config.AS.Interop.InteropClient; cfg.Transport == nil {
+				cfg.Transport = transport
 			}
 			fetcher, err := config.AS.EndDeviceFetcher.NewFetcher(c)
 			if err != nil {
