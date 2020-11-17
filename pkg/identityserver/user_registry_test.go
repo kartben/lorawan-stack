@@ -336,6 +336,11 @@ func TestUsersCRUD(t *testing.T) {
 		}
 		a.So(empty, should.BeNil)
 
+		_, err = reg.Purge(ctx, &user.UserIdentifiers, creds)
+		if a.So(err, should.NotBeNil) {
+			a.So(errors.IsPermissionDenied(err), should.BeTrue)
+		}
+
 		_, err = reg.Purge(ctx, &user.UserIdentifiers, userCreds(adminUserIdx))
 		a.So(err, should.BeNil)
 	})

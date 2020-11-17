@@ -310,7 +310,7 @@ func TestOAuthStore(t *testing.T) {
 				a.So(errors.IsNotFound(err), should.BeTrue)
 			}
 
-			tokenList, _ := store.ListAccessTokens(ctx, userIDs, clientIDs)
+			tokenList, _ = store.ListAccessTokens(ctx, userIDs, clientIDs)
 			a.So(tokenList, should.HaveLength, 0)
 		})
 	})

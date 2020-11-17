@@ -500,6 +500,11 @@ func TestGatewaysSecrets(t *testing.T) {
 		_, err = reg.Delete(ctx, &created.GatewayIdentifiers, creds)
 		a.So(err, should.BeNil)
 
+		_, err = reg.Purge(ctx, &created.GatewayIdentifiers, creds)
+		if a.So(err, should.NotBeNil) {
+			a.So(errors.IsPermissionDenied(err), should.BeTrue)
+		}
+
 		_, err = reg.Purge(ctx, &created.GatewayIdentifiers, userCreds(adminUserIdx))
 		a.So(err, should.BeNil)
 
