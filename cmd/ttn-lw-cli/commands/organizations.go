@@ -42,6 +42,10 @@ func organizationIDFlags() *pflag.FlagSet {
 
 var errNoOrganizationID = errors.DefineInvalidArgument("no_organization_id", "no organization ID set")
 
+var organizationPurgeWarning = `This action will permanently delete the organization and all 
+	related data (API keys, rights, attributes etc.). 
+	It might also cause entities to be orphaned if this organization is the only one that has full rights on the entity.`
+
 func getOrganizationID(flagSet *pflag.FlagSet, args []string) *ttnpb.OrganizationIdentifiers {
 	var organizationID string
 	if len(args) > 0 {
@@ -254,7 +258,9 @@ var (
 			if orgID == nil {
 				return errNoOrganizationID
 			}
-
+			if !confirmChoice(organizationPurgeWarning) {
+				return errNoConfirmation
+			}
 			is, err := api.Dial(ctx, config.IdentityServerGRPCAddress)
 			if err != nil {
 				return err

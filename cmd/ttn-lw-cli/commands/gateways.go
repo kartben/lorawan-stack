@@ -48,6 +48,8 @@ func gatewayIDFlags() *pflag.FlagSet {
 
 var errNoGatewayID = errors.DefineInvalidArgument("no_gateway_id", "no gateway ID set")
 
+var gatewayPurgeWarning = "This action will permanently delete the gateway and all related data (API keys, antennas, attributes etc.)"
+
 func getGatewayID(flagSet *pflag.FlagSet, args []string, requireID bool) (*ttnpb.GatewayIdentifiers, error) {
 	gatewayID, _ := flagSet.GetString("gateway-id")
 	gatewayEUIHex, _ := flagSet.GetString("gateway-eui")
@@ -420,6 +422,9 @@ var (
 		Aliases: []string{"permanent-delete", "hard-delete"},
 		Short:   "Purge a gateway",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if !confirmChoice(gatewayPurgeWarning) {
+				return errNoConfirmation
+			}
 			gtwID, err := getGatewayID(cmd.Flags(), args, true)
 			if err != nil {
 				return err
