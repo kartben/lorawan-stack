@@ -139,11 +139,8 @@ func (s *apiKeyStore) DeleteEntityAPIKeys(ctx context.Context, entityID ttnpb.Id
 	if err != nil {
 		return err
 	}
-	var keyModels []APIKey
-	query := s.query(ctx, APIKey{}).Where(&APIKey{EntityID: entity.PrimaryKey(), EntityType: entityTypeForID(entityID)})
-	err = query.Find(&keyModels).Error
-	if err != nil {
-		return err
-	}
-	return query.Delete(&keyModels).Error
+	return s.query(ctx, APIKey{}).Where(&APIKey{
+		EntityID:   entity.PrimaryKey(),
+		EntityType: entityTypeForID(entityID),
+	}).Delete(&APIKey{}).Error
 }

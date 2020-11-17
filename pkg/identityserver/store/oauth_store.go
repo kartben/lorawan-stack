@@ -149,7 +149,18 @@ func (s *oauthStore) DeleteUserAuthorizations(ctx context.Context, userIDs *ttnp
 	err = s.query(ctx, ClientAuthorization{}).Where(ClientAuthorization{
 		UserID: user.PrimaryKey(),
 	}).Delete(&ClientAuthorization{}).Error
-	return err
+	if err != nil {
+		return err
+	}
+	err = s.query(ctx, AuthorizationCode{}).Where(AuthorizationCode{
+		UserID: user.PrimaryKey(),
+	}).Delete(&AuthorizationCode{}).Error
+	if err != nil {
+		return err
+	}
+	return s.query(ctx, AccessToken{}).Where(AccessToken{
+		UserID: user.PrimaryKey(),
+	}).Delete(&AccessToken{}).Error
 }
 
 func (s *oauthStore) CreateAuthorizationCode(ctx context.Context, code *ttnpb.OAuthAuthorizationCode) error {
