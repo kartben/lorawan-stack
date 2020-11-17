@@ -184,7 +184,7 @@ func (s *organizationStore) PurgeOrganization(ctx context.Context, id *ttnpb.Org
 	if err != nil {
 		return err
 	}
-	// Purge account after purging user because it is necessary for user query
+	// Purge account after purging organization because it is necessary for organization query
 	return s.query(ctx, Account{}, withUnscoped()).Where(Account{
 		UID:         id.IDString(),
 		AccountType: id.EntityType(),

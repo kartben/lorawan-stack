@@ -240,11 +240,8 @@ func (s *contactInfoStore) DeleteEntityContactInfo(ctx context.Context, entityID
 	if err != nil {
 		return err
 	}
-	var contactInfo []ContactInfo
-	query := s.query(ctx, ContactInfo{}).Where(&ContactInfo{EntityID: entity.PrimaryKey(), EntityType: entityTypeForID(entityID)})
-	err = query.Find(&contactInfo).Error
-	if err != nil {
-		return err
-	}
-	return query.Delete(&contactInfo).Error
+	return s.query(ctx, ContactInfo{}).Where(&ContactInfo{
+		EntityID:   entity.PrimaryKey(),
+		EntityType: entityTypeForID(entityID),
+	}).Delete(&ContactInfo{}).Error
 }

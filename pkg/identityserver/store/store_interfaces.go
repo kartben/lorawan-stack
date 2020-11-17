@@ -133,7 +133,7 @@ type MembershipStore interface {
 	// Delete all member rights on an entity. Used for purging entities.
 	DeleteEntityMembers(ctx context.Context, entityID ttnpb.Identifiers) error
 	// Delete all user rights for an entity.
-	DeleteAccountMembers(ctx context.Context, id ttnpb.Identifiers) error
+	DeleteAccountMembers(ctx context.Context, id *ttnpb.OrganizationOrUserIdentifiers) error
 }
 
 // APIKeyStore interface for storing API keys for entities (applications,
