@@ -220,7 +220,9 @@ type GatewayRegistryClient interface {
 	Update(ctx context.Context, in *UpdateGatewayRequest, opts ...grpc.CallOption) (*Gateway, error)
 	// Delete the gateway. This may not release the gateway ID for reuse, but it does release the EUI.
 	Delete(ctx context.Context, in *GatewayIdentifiers, opts ...grpc.CallOption) (*types.Empty, error)
-	// Purge the gateway. This will release all field values for reuse.
+	// Purge the gateway. This will release both gateway ID and EUI for reuse.
+	// The gateway owner is responsible for clearing data from any (external) integrations
+	// that may store and expose data by gateway ID.
 	Purge(ctx context.Context, in *GatewayIdentifiers, opts ...grpc.CallOption) (*types.Empty, error)
 }
 
@@ -316,7 +318,9 @@ type GatewayRegistryServer interface {
 	Update(context.Context, *UpdateGatewayRequest) (*Gateway, error)
 	// Delete the gateway. This may not release the gateway ID for reuse, but it does release the EUI.
 	Delete(context.Context, *GatewayIdentifiers) (*types.Empty, error)
-	// Purge the gateway. This will release all field values for reuse.
+	// Purge the gateway. This will release both gateway ID and EUI for reuse.
+	// The gateway owner is responsible for clearing data from any (external) integrations
+	// that may store and expose data by gateway ID.
 	Purge(context.Context, *GatewayIdentifiers) (*types.Empty, error)
 }
 

@@ -127,6 +127,8 @@ type ApplicationRegistryClient interface {
 	Delete(ctx context.Context, in *ApplicationIdentifiers, opts ...grpc.CallOption) (*types.Empty, error)
 	// Purge the application. This will release the application ID for reuse.
 	// All end devices must be deleted from the application before it can be deleted.
+	// The application owner is responsible for clearing data from any (external) integrations
+	// that may store and expose data by application ID
 	Purge(ctx context.Context, in *ApplicationIdentifiers, opts ...grpc.CallOption) (*types.Empty, error)
 }
 
@@ -214,6 +216,8 @@ type ApplicationRegistryServer interface {
 	Delete(context.Context, *ApplicationIdentifiers) (*types.Empty, error)
 	// Purge the application. This will release the application ID for reuse.
 	// All end devices must be deleted from the application before it can be deleted.
+	// The application owner is responsible for clearing data from any (external) integrations
+	// that may store and expose data by application ID
 	Purge(context.Context, *ApplicationIdentifiers) (*types.Empty, error)
 }
 

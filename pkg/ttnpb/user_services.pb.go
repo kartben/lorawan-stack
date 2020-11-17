@@ -126,7 +126,9 @@ type UserRegistryClient interface {
 	UpdatePassword(ctx context.Context, in *UpdateUserPasswordRequest, opts ...grpc.CallOption) (*types.Empty, error)
 	// Delete the user. This may not release the user ID for reuse.
 	Delete(ctx context.Context, in *UserIdentifiers, opts ...grpc.CallOption) (*types.Empty, error)
-	//Purge the user. This will release the user ID for reuse.
+	// Purge the user. This will release the user ID for reuse.
+	// The user is responsible for clearing data from any (external) integrations
+	// that may store and expose data by user or organization ID.
 	Purge(ctx context.Context, in *UserIdentifiers, opts ...grpc.CallOption) (*types.Empty, error)
 }
 
@@ -230,7 +232,9 @@ type UserRegistryServer interface {
 	UpdatePassword(context.Context, *UpdateUserPasswordRequest) (*types.Empty, error)
 	// Delete the user. This may not release the user ID for reuse.
 	Delete(context.Context, *UserIdentifiers) (*types.Empty, error)
-	//Purge the user. This will release the user ID for reuse.
+	// Purge the user. This will release the user ID for reuse.
+	// The user is responsible for clearing data from any (external) integrations
+	// that may store and expose data by user or organization ID.
 	Purge(context.Context, *UserIdentifiers) (*types.Empty, error)
 }
 
