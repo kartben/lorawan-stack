@@ -122,6 +122,8 @@ type OrganizationRegistryClient interface {
 	// Delete the organization. This may not release the organization ID for reuse.
 	Delete(ctx context.Context, in *OrganizationIdentifiers, opts ...grpc.CallOption) (*types.Empty, error)
 	// Purge the organization. This will release the organization ID for reuse.
+	// The user is responsible for clearing data from any (external) integrations
+	// that may store and expose data by user or organization ID.
 	Purge(ctx context.Context, in *OrganizationIdentifiers, opts ...grpc.CallOption) (*types.Empty, error)
 }
 
@@ -207,6 +209,8 @@ type OrganizationRegistryServer interface {
 	// Delete the organization. This may not release the organization ID for reuse.
 	Delete(context.Context, *OrganizationIdentifiers) (*types.Empty, error)
 	// Purge the organization. This will release the organization ID for reuse.
+	// The user is responsible for clearing data from any (external) integrations
+	// that may store and expose data by user or organization ID.
 	Purge(context.Context, *OrganizationIdentifiers) (*types.Empty, error)
 }
 
