@@ -3268,6 +3268,380 @@
         ]
       }
     },
+    "/dr/brands": {
+      "get": {
+        "operationId": "DeviceRepository_ListBrands",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v3ListEndDeviceBrandsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "brand_id",
+            "description": "Optionally limit to a specific brand ID.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "Limit (for pagination).",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Offset (for pagination).",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "order_by",
+            "description": "Order (for pagination).",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DeviceRepository"
+        ]
+      }
+    },
+    "/dr/brands/{brand_id}": {
+      "get": {
+        "operationId": "DeviceRepository_ListBrands2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v3ListEndDeviceBrandsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "brand_id",
+            "description": "Optionally limit to a specific brand ID",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "Limit (for pagination).",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Offset (for pagination).",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "order_by",
+            "description": "Order (for pagination).",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DeviceRepository"
+        ]
+      }
+    },
+    "/dr/brands/{brand_id}/definitions": {
+      "get": {
+        "operationId": "DeviceRepository_ListDefinitions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v3ListEndDeviceDefinitionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "brand_id",
+            "description": "Query end devices from a specific brand",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_id",
+            "description": "Query end devices matching a specific model.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "description": "Query end devices matching a search string.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "order_by",
+            "description": "Order end devices.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "Limit number of results.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Start returning devices at offset.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "field_mask.paths",
+            "description": "The set of field mask paths.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "DeviceRepository"
+        ]
+      }
+    },
+    "/dr/brands/{brand_id}/models/{model_id}/formatters/{firmware_version}/{region_id}": {
+      "get": {
+        "operationId": "DeviceRepository_GetMessagePayloadFormatters",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v3MessagePayloadFormatters"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "brand_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "firmware_version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "region_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "hardware_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DeviceRepository"
+        ]
+      }
+    },
+    "/dr/brands/{brand_id}/models/{model_id}/templates/{firmware_version}/{region_id}": {
+      "get": {
+        "operationId": "DeviceRepository_GetTemplate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v3EndDeviceTemplate"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "brand_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "firmware_version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "region_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "hardware_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DeviceRepository"
+        ]
+      }
+    },
+    "/dr/{brand_id}/models/{model_id}/definitions": {
+      "get": {
+        "operationId": "DeviceRepository_ListDefinitions2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v3ListEndDeviceDefinitionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "brand_id",
+            "description": "Query end devices from a specific brand",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_id",
+            "description": "Query end devices matching a specific model",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "description": "Query end devices matching a search string.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "order_by",
+            "description": "Order end devices.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "Limit number of results.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Start returning devices at offset.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "field_mask.paths",
+            "description": "The set of field mask paths.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "DeviceRepository"
+        ]
+      }
+    },
     "/edcs/applications/{application_ids.application_id}/authorize": {
       "post": {
         "operationId": "EndDeviceClaimingServer_AuthorizeApplication",
@@ -8006,6 +8380,50 @@
         }
       }
     },
+    "EndDeviceDefinitionFirmwareVersion": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "hardware_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "profiles": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/FirmwareVersionProfile"
+          }
+        }
+      }
+    },
+    "EndDeviceDefinitionPhotos": {
+      "type": "object",
+      "properties": {
+        "main": {
+          "type": "string",
+          "description": "TODO: this should be prefixed with assets root URL, or path to image."
+        },
+        "other": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "TODO: this should be prefixed with assets root URL, or path to image."
+        }
+      }
+    },
+    "EndDeviceDefinitionVersion": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        }
+      }
+    },
     "EventAuthentication": {
       "type": "object",
       "properties": {
@@ -8020,6 +8438,20 @@
         "token_id": {
           "type": "string",
           "description": "The ID of the token that was used."
+        }
+      }
+    },
+    "FirmwareVersionProfile": {
+      "type": "object",
+      "properties": {
+        "profile_id": {
+          "type": "string"
+        },
+        "lorawan_certified": {
+          "type": "boolean"
+        },
+        "codec_id": {
+          "type": "string"
         }
       }
     },
@@ -10817,6 +11249,70 @@
       },
       "description": "Authentication code for end devices."
     },
+    "v3EndDeviceBrand": {
+      "type": "object",
+      "properties": {
+        "brand_id": {
+          "type": "string"
+        },
+        "brand_name": {
+          "type": "string"
+        },
+        "end_devices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v3EndDeviceDefinition": {
+      "type": "object",
+      "properties": {
+        "definition_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "hardware_versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EndDeviceDefinitionVersion"
+          }
+        },
+        "firmware_versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EndDeviceDefinitionFirmwareVersion"
+          }
+        },
+        "sensors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "TODO: enum?"
+        },
+        "key_provisioning": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "TODO: enum?"
+        },
+        "key_security": {
+          "type": "string",
+          "title": "TODO: enum?"
+        },
+        "photos": {
+          "$ref": "#/definitions/EndDeviceDefinitionPhotos"
+        }
+      }
+    },
     "v3EndDeviceIdentifiers": {
       "type": "object",
       "properties": {
@@ -10898,6 +11394,9 @@
           "type": "string"
         },
         "firmware_version": {
+          "type": "string"
+        },
+        "region_id": {
           "type": "string"
         }
       },
@@ -11658,6 +12157,28 @@
         "encrypted_key": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "v3ListEndDeviceBrandsResponse": {
+      "type": "object",
+      "properties": {
+        "brands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v3EndDeviceBrand"
+          }
+        }
+      }
+    },
+    "v3ListEndDeviceDefinitionsResponse": {
+      "type": "object",
+      "properties": {
+        "definitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v3EndDeviceDefinition"
+          }
         }
       }
     },

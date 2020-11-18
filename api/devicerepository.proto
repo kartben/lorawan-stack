@@ -1,0 +1,165 @@
+// Copyright © 2020 The Things Network Foundation, The Things Industries B.V.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/field_mask.proto";
+import "lorawan-stack/api/end_device.proto";
+import "lorawan-stack/api/messages.proto";
+
+package ttn.lorawan.v3;
+
+option go_package = "go.thethings.network/lorawan-stack/v3/pkg/ttnpb";
+
+message EndDeviceBrand {
+  string brand_id = 1 [(gogoproto.customname) = "BrandID", (validate.rules).string = {pattern: "^[a-z0-9](?:[-]?[a-z0-9]){2,}$" , max_len: 36}];
+  string brand_name = 2;
+
+  repeated string end_devices = 3;
+
+  // TODO: add all fields from device repo
+}
+
+
+message EndDeviceDefinition {
+  string definition_id = 1;
+  string name = 2;
+  string description = 3;
+
+  message Version {
+    string version = 1;
+  }
+  repeated Version hardware_versions = 4;
+
+  message FirmwareVersion {
+    message Profile {
+      string profile_id = 1;
+      bool lorawan_certified = 2;
+      string codec_id = 3;
+    }
+    string version = 1;
+    repeated string hardware_versions = 2;
+    map<string, Profile> profiles = 3;
+  }
+
+  repeated FirmwareVersion firmware_versions = 5;
+
+  // TODO: enum?
+  repeated string sensors = 6;
+
+  // TODO: enum?
+  repeated string key_provisioning = 7;
+
+  // TODO: enum?
+  string key_security = 8;
+
+  message Photos {
+    // TODO: this should be prefixed with assets root URL, or path to image.
+    string main = 1;
+    // TODO: this should be prefixed with assets root URL, or path to image.
+    repeated string other = 2;
+  }
+
+  Photos photos = 9;
+}
+
+message ListEndDeviceBrandsRequest {
+  // Optionally limit to a specific brand ID
+  string brand_id = 1 [(gogoproto.customname) = "BrandID", (validate.rules).string = {pattern: "^[a-z0-9](?:[-]?[a-z0-9]){2,}$" , max_len: 36}];
+
+  // Limit (for pagination)
+  google.protobuf.UInt32Value limit = 2;
+
+  // Offset (for pagination)
+  google.protobuf.UInt32Value offset = 3;
+
+  // Order (for pagination)
+  string order_by = 4 [(validate.rules).string = {
+    in: ["", "brand_id", "-brand_id"]
+  }];
+
+  // TODO: searching and field mask paths.
+}
+
+message ListEndDeviceDefinitionsRequest {
+  // Query end devices from a specific brand
+  string brand_id = 1 [(gogoproto.customname) = "BrandID", (validate.rules).string = {pattern: "^[a-z0-9](?:[-]?[a-z0-9]){2,}$", max_len: 36}];
+
+  // Query end devices matching a specific model
+  string model_id = 2 [(gogoproto.customname) = "ModelID", (validate.rules).string = {pattern: "^[a-z0-9](?:[-]?[a-z0-9]){2,}$", max_len: 36}];
+
+  // Query end devices matching a search string
+  string search = 3;
+
+  // Order end devices
+  string order_by = 4 [(validate.rules).string = {
+    in: ["", "brand_id", "-brand_id", "model_id", "-model_id"]
+  }];
+
+  // Limit number of results.
+  google.protobuf.UInt32Value limit = 5;
+
+  // Start returning devices at offset.
+  google.protobuf.UInt32Value offset = 6;
+
+  // Field mask paths.
+  google.protobuf.FieldMask field_mask = 7 [(gogoproto.nullable) = true];
+}
+
+
+message ListEndDeviceBrandsResponse {
+  repeated EndDeviceBrand brands = 1;
+}
+
+message ListEndDeviceDefinitionsResponse {
+  repeated EndDeviceDefinition definitions = 1;
+}
+
+service DeviceRepository {
+  rpc ListBrands(ListEndDeviceBrandsRequest) returns (ListEndDeviceBrandsResponse) {
+    option (google.api.http) = {
+      get: "/dr/brands"
+
+      additional_bindings {
+        get: "/dr/brands/{brand_id}"
+      }
+    };
+  };
+
+  rpc ListDefinitions(ListEndDeviceDefinitionsRequest) returns (ListEndDeviceDefinitionsResponse) {
+    option (google.api.http) = {
+      get: "/dr/brands/{brand_id}/definitions"
+
+      additional_bindings {
+        get: "/dr/{brand_id}/models/{model_id}/definitions"
+      }
+    };
+  };
+
+  rpc GetTemplate(EndDeviceVersionIdentifiers) returns (EndDeviceTemplate) {
+    option (google.api.http) = {
+      get: "/dr/brands/{brand_id}/models/{model_id}/templates/{firmware_version}/{region_id}"
+    };
+  };
+
+  rpc GetMessagePayloadFormatters(EndDeviceVersionIdentifiers) returns (MessagePayloadFormatters) {
+    option (google.api.http) = {
+      get: "/dr/brands/{brand_id}/models/{model_id}/formatters/{firmware_version}/{region_id}"
+    };
+  };
+}
