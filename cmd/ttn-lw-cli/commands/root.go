@@ -221,7 +221,6 @@ var (
 )
 
 func confirmChoice(warning string, force bool) bool {
-	logger.Infof("FORCE VALUE: %v", force)
 	if force {
 		return true
 	}
