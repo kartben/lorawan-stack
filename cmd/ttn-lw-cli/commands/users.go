@@ -44,10 +44,6 @@ func userIDFlags() *pflag.FlagSet {
 
 var errNoUserID = errors.DefineInvalidArgument("no_user_id", "no user ID set")
 
-var userPurgeWarning = `This action will permanently delete the user and all related data
- 	(API keys, entity rights, attributes etc.).
-		It might also cause entities to be orphaned if this user is the only one that has full rights on the entity.`
-
 func getUserID(flagSet *pflag.FlagSet, args []string) *ttnpb.UserIdentifiers {
 	var userID string
 	if len(args) > 0 {
@@ -436,7 +432,11 @@ var (
 			if usrID == nil {
 				return errNoUserID
 			}
-			if !confirmChoice(userPurgeWarning) {
+			force, err := cmd.Flags().GetBool("force")
+			if err != nil {
+				return err
+			}
+			if !confirmChoice(userPurgeWarning, force) {
 				return errNoConfirmation
 			}
 			is, err := api.Dial(ctx, config.IdentityServerGRPCAddress)
@@ -494,6 +494,7 @@ func init() {
 	usersContactInfoCommand.PersistentFlags().AddFlagSet(userIDFlags())
 	usersCommand.AddCommand(usersContactInfoCommand)
 	usersPurgeCommand.Flags().AddFlagSet(userIDFlags())
+	usersPurgeCommand.Flags().AddFlagSet(forceFlags())
 	usersCommand.AddCommand(usersPurgeCommand)
 	Root.AddCommand(usersCommand)
 }

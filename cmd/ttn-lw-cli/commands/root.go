@@ -209,7 +209,22 @@ func optionalAuth() error {
 	return nil
 }
 
-func confirmChoice(warning string) bool {
+var (
+	applicationPurgeWarning  = "This action will permanently delete the application and all related data (API keys, rights, attributes etc.)"
+	gatewayPurgeWarning      = "This action will permanently delete the gateway and all related data (API keys, antennas, attributes etc.)"
+	organizationPurgeWarning = `This action will permanently delete the organization and all 
+	related data (API keys, rights, attributes etc.). 
+	It might also cause entities to be orphaned if this organization is the only one that has full rights on the entity.`
+	userPurgeWarning = `This action will permanently delete the user and all related data
+ 	(API keys, entity rights, attributes etc.).
+		It might also cause entities to be orphaned if this user is the only one that has full rights on the entity.`
+)
+
+func confirmChoice(warning string, force bool) bool {
+	logger.Infof("FORCE VALUE: %v", force)
+	if force {
+		return true
+	}
 	if warning != "" {
 		logger.Info(warning)
 	}

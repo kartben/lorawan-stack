@@ -43,8 +43,6 @@ func applicationIDFlags() *pflag.FlagSet {
 var errNoApplicationID = errors.DefineInvalidArgument("no_application_id", "no application ID set")
 var errNoConfirmation = errors.DefineInvalidArgument("no_confirmation", "action not confirmed")
 
-var applicationPurgeWarning = "This action will permanently delete the application and all related data (API keys, rights, attributes etc.)"
-
 func getApplicationID(flagSet *pflag.FlagSet, args []string) *ttnpb.ApplicationIdentifiers {
 	var applicationID string
 	if len(args) > 0 {
@@ -259,14 +257,18 @@ var (
 		Aliases: []string{"permanent-delete", "hard-delete"},
 		Short:   "Purge an application",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if !confirmChoice(applicationPurgeWarning) {
-				return errNoConfirmation
-			}
 			appID := getApplicationID(cmd.Flags(), args)
 			if appID == nil {
 				return errNoApplicationID
 			}
 
+			force, err := cmd.Flags().GetBool("force")
+			if err != nil {
+				return err
+			}
+			if !confirmChoice(applicationPurgeWarning, force) {
+				return errNoConfirmation
+			}
 			is, err := api.Dial(ctx, config.IdentityServerGRPCAddress)
 			if err != nil {
 				return err
@@ -310,6 +312,7 @@ func init() {
 	applicationsContactInfoCommand.PersistentFlags().AddFlagSet(applicationIDFlags())
 	applicationsCommand.AddCommand(applicationsContactInfoCommand)
 	applicationsPurgeCommand.Flags().AddFlagSet(applicationIDFlags())
+	applicationsPurgeCommand.Flags().AddFlagSet(forceFlags())
 	applicationsCommand.AddCommand(applicationsPurgeCommand)
 	Root.AddCommand(applicationsCommand)
 }
